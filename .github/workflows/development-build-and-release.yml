@@ -1,4 +1,4 @@
-name: Development Build and Deploy
+name: Development Build and Release
 
 on:
   push:
@@ -26,11 +26,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: qBuddy.jar
-          path: /home/runner/work/qBuddy/qBuddy/target/*.jar
+          path: /home/runner/work/qBuddy/qBuddy/build/*.jar
 
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/*.jar"
-          draft: true
+          prerelease: true
+          tag: "development"
