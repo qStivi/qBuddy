@@ -50,4 +50,27 @@
         <!-- endregion -->
     </dependencies>
 
+    <build>
+        <directory>build</directory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.qStivi.Main</mainClass> <!-- Replace with your main class -->
+                        </manifest>
+                    </archive>
+                    <outputDirectory>build</outputDirectory> <!-- Specify the desired output directory -->
+                    <finalName>qBuddy</finalName> <!-- Specify the desired JAR file name -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
 </project>
