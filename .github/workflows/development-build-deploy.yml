@@ -5,7 +5,7 @@ on:
     branches:
       - dev
     tags:
-    - 'dev'
+    - 'development'
 
 jobs:
   build-and-deploy:
