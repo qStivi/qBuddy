@@ -26,5 +26,5 @@ jobs:
       - name: Upload JAR file
         uses: actions/upload-artifact@v3
         with:
-          name: qBuddy
+          name: qBuddy.jar
           path: /home/runner/work/qBuddy/qBuddy/target/*.jar
