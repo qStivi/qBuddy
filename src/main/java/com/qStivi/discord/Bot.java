@@ -48,7 +48,7 @@ public class Bot {
                             audioManager.setSendingHandler(audioHandler);
                             logger.info("Connecting to voice channel...");
                             audioManager.openAudioConnection(event.getMember().getVoiceState().getChannel());
-                            event.getHook().editOriginal("I have arrived!").complete();
+                            event.getHook().editOriginal("Yes master!").complete();
                         } else {
                             // Tell the user to join a voice channel
                             event.getHook().editOriginal("You need to join a voice channel first!").complete();
