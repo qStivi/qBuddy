@@ -1,10 +1,7 @@
 package com.qStivi.discord;
 
 import com.qStivi.PropertiesLoader;
-import com.qStivi.stt.MicrosoftSTT;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.audio.SpeakingMode;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -14,9 +11,6 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.EnumSet;
-import java.util.List;
 
 public class Bot {
     private static final Logger logger = LoggerFactory.getLogger(Bot.class);
@@ -54,7 +48,7 @@ public class Bot {
                             audioManager.setSendingHandler(audioHandler);
                             logger.info("Connecting to voice channel...");
                             audioManager.openAudioConnection(event.getMember().getVoiceState().getChannel());
-                            event.getHook().editOriginal("Hello there!").complete();
+                            event.getHook().editOriginal("I have arrived!").complete();
                         } else {
                             // Tell the user to join a voice channel
                             event.getHook().editOriginal("You need to join a voice channel first!").complete();
