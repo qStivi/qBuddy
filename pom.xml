@@ -1,49 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <scm>
-        <connection>scm:git:https://github.com/qstivi/qbuddy.git</connection>
-        <developerConnection>scm:git:https://github.com/qstivi/qbuddy.git</developerConnection>
-        <url>https://github.com/qstivi/qbuddy</url>
-      <tag>development</tag>
-  </scm>
 
     <groupId>com.qStivi</groupId>
     <artifactId>qBuddy</artifactId>
-    <version>0</version>
-
-    <profiles>
-        <!-- Development Profile -->
-        <profile>
-            <id>development</id>
-            <activation>
-                <property>
-                    <name>branch</name>
-                    <value>dev</value>
-                </property>
-            </activation>
-            <properties>
-                <release.tag>development</release.tag>
-                <release.developmentVersion>1.0-SNAPSHOT</release.developmentVersion>
-            </properties>
-        </profile>
-
-        <!-- Release Candidate Profile -->
-        <profile>
-            <id>release-candidate</id>
-            <activation>
-                <property>
-                    <name>branch</name>
-                    <value>main</value>
-                </property>
-            </activation>
-            <properties>
-                <release.tag>release-candidate</release.tag>
-                <release.developmentVersion>1.0-SNAPSHOT</release.developmentVersion>
-            </properties>
-        </profile>
-    </profiles>
+    <version>v0</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -116,7 +78,8 @@
                             </filters>
                             <transformers>
                                 <!-- Configure the plugin to include dependencies in the JAR file -->
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.qStivi.Main</mainClass> <!-- Replace with your main class -->
                                 </transformer>
                             </transformers>
@@ -125,20 +88,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- Maven Release Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.1</version>
-                <configuration>
-                    <!-- Tag Name for Release -->
-                    <tag>${release.tag}</tag>
-
-                    <!-- Development Version -->
-                    <developmentVersion>${release.developmentVersion}</developmentVersion>
-                </configuration>
             </plugin>
         </plugins>
     </build>
