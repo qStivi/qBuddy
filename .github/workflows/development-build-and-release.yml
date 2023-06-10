@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'oracle'
-          java-version: '19.0.2'
+          java-version: '11'
 
       - name: Build with Maven
         run: mvn clean package
@@ -32,12 +32,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: qBuddy.jar
-          path: /home/runner/work/qBuddy/qBuddy/build/*.jar
+          path: /home/runner/work/qBuddy/qBuddy/*.jar
 
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1.12.0
         with:
-          artifacts: "build/*.jar"
+          artifacts: "*.jar"
           prerelease: true
           tag: devbuild-${{ steps.date.outputs.date }}
