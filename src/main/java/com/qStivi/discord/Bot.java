@@ -42,8 +42,8 @@ public class Bot {
                         if (event.getMember().getVoiceState().inAudioChannel()) {
                             // Join the voice channel
                             var audioManager = event.getGuild().getAudioManager();
-//                            var audioHandler = new AudioHandler(audioManager, event);
-                            var audioHandler = new EchoHandler();
+                            var audioHandler = new AudioHandler(audioManager, event);
+//                            var audioHandler = new EchoHandler();
                             audioManager.setReceivingHandler(audioHandler);
                             audioManager.setSendingHandler(audioHandler);
                             logger.info("Connecting to voice channel...");
