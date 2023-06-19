@@ -1,7 +1,6 @@
 package com.qStivi;
 
 import com.qStivi.discord.Bot;
-import com.qStivi.stt.MicrosoftSTT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

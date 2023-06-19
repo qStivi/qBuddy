@@ -1,58 +1,66 @@
 package com.qStivi.discord;
 
-import com.microsoft.cognitiveservices.speech.audio.AudioInputStream;
-import com.microsoft.cognitiveservices.speech.audio.AudioStreamFormat;
-import com.microsoft.cognitiveservices.speech.audio.PushAudioInputStream;
-import com.qStivi.audio.AudioConverter;
-import com.qStivi.stt.MicrosoftSTT;
-import net.dv8tion.jda.api.audio.*;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.managers.AudioManager;
+import com.qStivi.speechToText.ISpeechToText;
+import com.qStivi.speechToText.MicrosoftSpeechToText;
+import net.dv8tion.jda.api.audio.AudioReceiveHandler;
+import net.dv8tion.jda.api.audio.AudioSendHandler;
+import net.dv8tion.jda.api.audio.UserAudio;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.concurrent.Semaphore;
 
 public class AudioHandler implements AudioReceiveHandler, AudioSendHandler {
     private static final Logger logger = LoggerFactory.getLogger(AudioHandler.class);
+    AudioInputStream audioInputStream;
+    byte[] lastFrame;
+    ISpeechToText speechToText;
 
-    private final AudioManager audioManager;
-    private final SlashCommandInteractionEvent event;
-    private final MicrosoftSTT stt;
-    private final PushAudioInputStream audioInputStream;
-    AudioConverter audioConverter;
-    public AudioHandler(AudioManager audioManager, SlashCommandInteractionEvent event) {
+    public AudioHandler() {
         logger.info("Creating AudioHandler...");
-        this.audioManager = audioManager;
-        var microsoftAudioFormat = new AudioFormat(16000, 16, 1, true, true);
-        this.audioConverter = new AudioConverter(AudioReceiveHandler.OUTPUT_FORMAT, microsoftAudioFormat);;
-        this.event = event;
-        this.audioInputStream = AudioInputStream.createPushStream();
-        this.stt = new MicrosoftSTT(audioInputStream);
+        this.speechToText = new MicrosoftSpeechToText();
+
         logger.info("AudioHandler created.");
     }
 
     @Override
     public boolean canProvide() {
-        return audioManager.isConnected();
+        if (this.audioInputStream == null) return false;
+        AudioFormat audioFormat = this.audioInputStream.getFormat();
+
+        int sampleSizeInBytes = audioFormat.getSampleSizeInBits() / 8;
+        int sampleRate = (int) audioFormat.getSampleRate();
+        int channels = audioFormat.getChannels();
+        int bytesPerFrame = sampleSizeInBytes * channels;
+
+        double duration = 20.0; // milliseconds
+
+        int bytesToRead = (int) ((sampleRate * duration / 1000) * bytesPerFrame);
+
+        byte[] buffer = new byte[bytesToRead];
+        int bytesRead = 0;
+        int totalBytesRead = 0;
+        try {
+            bytesRead = this.audioInputStream.read(buffer, totalBytesRead, bytesToRead - totalBytesRead);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (bytesRead > 0) {
+            lastFrame = buffer;
+            return true;
+        }
+        return false;
+
     }
 
     @Override
     public ByteBuffer provide20MsAudio() {
-        return null;
-    }
-
-    @Override
-    public boolean isOpus() {
-        return false;
-    }
-
-    @Override
-    public boolean canReceiveCombined() {
-        return false;
+        return ByteBuffer.wrap(lastFrame);
     }
 
     @Override
@@ -61,26 +69,10 @@ public class AudioHandler implements AudioReceiveHandler, AudioSendHandler {
     }
 
     @Override
-    public boolean canReceiveEncoded() {
-        return false;
-    }
+    public void handleUserAudio(@NotNull UserAudio userAudio) {
+        if (userAudio.getUser().isBot()) return;
+        if (userAudio.getAudioData(1).length == 0) return;
 
-    @Override
-    public void handleEncodedAudio(OpusPacket packet) {
-    }
-
-    @Override
-    public void handleCombinedAudio(CombinedAudio combinedAudio) {
-    }
-
-    @Override
-    public void handleUserAudio(UserAudio userAudio) {
-        logger.info("handling combined audio...");
-//        this.audioInputStream.write(audioConverter.convert(userAudio.getAudioData(1.0f)));
-    }
-
-    @Override
-    public boolean includeUserInCombinedAudio(User user) {
-        return false;
+        speechToText.sendData(userAudio);
     }
 }
