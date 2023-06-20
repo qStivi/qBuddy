@@ -1,13 +1,6 @@
 package com.qStivi.discord;
 
 import com.qStivi.PropertiesLoader;
-import com.qStivi.audio.lavaplayer.AudioInputStreamSourceManager;
-import com.qStivi.audio.lavaplayer.LoadResultHandler;
-import com.qStivi.audio.lavaplayer.TrackScheduler;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -36,16 +29,8 @@ public class Bot {
                 Commands.slash("join", "Joins your voice channel")
         ).complete();
 
-
-        DefaultAudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-        AudioPlayer audioPlayer = playerManager.createPlayer();
-        TrackScheduler trackScheduler = new TrackScheduler(audioPlayer);
-        AudioSourceManagers.registerLocalSource(playerManager);
-        audioPlayer.addListener(trackScheduler);
-        playerManager.registerSourceManager(new AudioInputStreamSourceManager());
-
         logger.info("Registering listeners...");
-        jda.addEventListener(new EventListener(playerManager, trackScheduler, audioPlayer));
+        jda.addEventListener(new EventListener());
         logger.info("Bot created!");
     }
 }
