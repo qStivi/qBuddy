@@ -23,7 +23,7 @@ public class DiscordListener extends ListenerAdapter {
             assert guild != null;
             var audioManager = guild.getAudioManager();
             AudioHandler audioHandler = null;
-            audioHandler = new AudioHandler();
+            audioHandler = new AudioHandler(event.getChannel().asTextChannel());
             // var audioHandler = new EchoHandler();
             audioManager.setReceivingHandler(audioHandler);
             audioManager.setSendingHandler(audioHandler);

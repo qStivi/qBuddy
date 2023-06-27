@@ -19,7 +19,7 @@ public class EventListener extends ListenerAdapter {
         if (event.getMember().getVoiceState().inAudioChannel()) {
             // Join the voice channel
             var audioManager = event.getGuild().getAudioManager();
-            var audioHandler = new AudioHandler();
+            var audioHandler = new AudioHandler(event.getChannel().asTextChannel());
 //                            var audioHandler = new EchoHandler();
             audioManager.setReceivingHandler(audioHandler);
             audioManager.setSendingHandler(audioHandler);
@@ -36,8 +36,9 @@ public class EventListener extends ListenerAdapter {
     public void onReady(ReadyEvent event) {
         if (event.getJDA().getGuildById(703363806356701295L).getMemberById(219108246143631364L).getVoiceState().inAudioChannel()) {
             var audioManager = event.getJDA().getGuildById(703363806356701295L).getAudioManager();
-            var audioHandler = new AudioHandler();
-            event.getJDA().getGuildById(703363806356701295L).getChannelById(TextChannel.class, 742024523502846052L).sendMessage("I'm back!").complete();
+            var channel = event.getJDA().getGuildById(703363806356701295L).getChannelById(TextChannel.class, 742024523502846052L);
+            var audioHandler = new AudioHandler(channel);
+            channel.sendMessage("I'm back!").complete();
             audioManager.setReceivingHandler(audioHandler);
             audioManager.setSendingHandler(audioHandler);
             logger.info("Connecting to voice channel...");
