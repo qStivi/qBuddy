@@ -19,15 +19,16 @@ public class MicrosoftSpeechToText {
     public MicrosoftSpeechToText() {
         // Create speech config
         config = SpeechConfig.fromSubscription(speechKey, speechRegion);
+        config.setSpeechRecognitionLanguage("de-DE");
     }
 
     public String recognize(File file) throws ExecutionException, InterruptedException {
 
-// Create audio config from file
+        // Create audio config from file
         AudioConfig audioInput = AudioConfig.fromWavFileInput(file.getAbsolutePath());
-// Create speech recognizer
+        // Create speech recognizer
         SpeechRecognizer recognizer = new SpeechRecognizer(config, audioInput);
-// Recognize speech
+        // Recognize speech
         var task = recognizer.recognizeOnceAsync();
 
         file.delete();

@@ -1,15 +1,19 @@
 package com.qStivi.chatBotAI;
 
 import com.qStivi.PropertiesLoader;
+import com.qStivi.discord.AudioHandler;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatGPT {
+    private static final Logger logger = LoggerFactory.getLogger(ChatGPT.class);
     private final OpenAiService service;
 
     public ChatGPT() {
@@ -26,7 +30,7 @@ public class ChatGPT {
                 Dein Name ist 'Buddy'.
                 Denk daran, dass du mit den Leuten redest und nicht schreibst.
                 Du wirst niemals mit code blöcken antworten oder formatierungen benutzen.
-                Anstatt Emojis zu benutzen, benutze Wörter wie 'lach' oder 'grinse'.
+                Benutze Wörter wie 'lach' oder 'grinse', statt ':D' oder ':)'.
                 Deine Aufgabe ist es eine spontane Konversation zu führen.
                 Versuche nicht zu perfekt zu sein und mach auch mal Fehler.
                 Benutze ein wenig Humor und sei nicht zu ernst.
@@ -43,19 +47,24 @@ public class ChatGPT {
         final ChatMessage userMessage = new ChatMessage(ChatMessageRole.USER.value(), input);
         messages.add(systemMessage);
         messages.add(userMessage);
+        logger.info("Message history length: " + messages.stream().mapToInt(message -> message.getContent().length()).sum());
+        if (messages.stream().mapToInt(message -> message.getContent().length()).sum() > 58000) {
+            messages.remove(0);
+        }
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest
                 .builder()
-                .model("gpt-3.5-turbo")
+                .model("gpt-3.5-turbo-16k")
                 .messages(messages)
                 .build();
 
         var sb = new StringBuilder();
-        service.createChatCompletion(chatCompletionRequest).getChoices().forEach(chatCompletionChoice -> {
-            if (chatCompletionChoice.getFinishReason().equals("stop")) {
-                sb.append(chatCompletionChoice.getMessage().getContent());
+        service.streamChatCompletion(chatCompletionRequest).blockingForEach(next -> {
+            if (next.getChoices().get(0).getMessage().getContent() != null) {
+                sb.append(next.getChoices().get(0).getMessage().getContent());
             }
         });
 //        sb.delete(0, 4).delete(sb.length() - 4, sb.length());
+        logger.info("Generated: " + sb);
         var message = new ChatMessage(ChatMessageRole.ASSISTANT.value(), sb.toString());
         messages.add(message);
         return message.getContent();
