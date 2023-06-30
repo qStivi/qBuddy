@@ -14,11 +14,8 @@ public class Bot {
 
 
     public Bot() {
-        logger.info("Creating Bot...");
-        var properties = PropertiesLoader.getInstance();
-
         logger.info("Creating JDA instance...");
-        var jda = JDABuilder.createLight(properties.getAPIKey("discord.token"))
+        var jda = JDABuilder.createLight(PropertiesLoader.getInstance().getAPIKey("discord.token"))
                 .enableCache(CacheFlag.VOICE_STATE)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES)
                 .setMemberCachePolicy(MemberCachePolicy.VOICE)
@@ -31,6 +28,5 @@ public class Bot {
 
         logger.info("Registering listeners...");
         jda.addEventListener(new EventListener());
-        logger.info("Bot created!");
     }
 }
